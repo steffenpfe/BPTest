@@ -122,7 +122,7 @@ class MyGUI(Frame) :
 
     def buttonHandler(self, event) :
         """This function is responsible for the callbacks of all buttons."""
-        pass        
+        print(event.widget["text"])
         
 
     def initParams(self) :
