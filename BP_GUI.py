@@ -3,7 +3,7 @@ from tkinter import *
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import matplotlib.animation as animation
-import numpy as np
+import pickle
 
 class MyGUI(Frame) :
     def __init__(self, master=None) :
@@ -66,18 +66,32 @@ class MyGUI(Frame) :
 
     def animateCanvasPlot(self,i) :
         """This function updates the Canvas Plot periodically. The Values
-            which are need to update the Plot are read out of a text file."""
+            which are need to update the Plot are read out of a file (pickle).
+            In the pickle there are two arrays:
+            x                    -->time
+            [y1,y2,y3,...]       -->each y is an array which saves the price for each timestamp
+            ->So the lenght of each y array has to be the same like the x array"""
         x_arr = []
         y_arr = []
-        with open("CanvasValues.txt", "r") as file :
-            for i in file :
-                line = i.strip() #remove white-spaces
-                data = line.split(",")
-                x_arr.append(int(data[0]))
-                y_arr.append(int(data[1]))
+        #Read values out of a text file:
+        #with open("CanvasValues.txt", "r") as file :
+        #    for i in file :
+        #        line = i.strip() #remove white-spaces
+        #        data = line.split(",")
+        #        x_arr.append(int(data[0]))
+        #        y_arr.append(int(data[1]))
+
+        #Read values out of a file (pickle)
+        with open("xyvalues", "rb") as file:
+            x_arr = pickle.load(file)
+            y_arr = pickle.load(file)
+
         self.axis.clear()
-        self.axis.plot(x_arr, y_arr)
-                
+        for i in range(0,len(y_arr)) :
+            if len(x_arr) == len(y_arr[i]):
+                self.axis.plot(x_arr, y_arr[i]) #Plot all arrays
+            else :
+                print("ERROR: Length of x-y-arrays for the Plot is not the same!",file=sys.stderr)
         
           
     def createWidgets(self) :
